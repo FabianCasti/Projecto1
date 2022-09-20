@@ -1,12 +1,17 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize, DataTypes } = require('sequelize');
+const dotenv = require('dotenv');
 
+dotenv.config({ path: './config.env' });
+
+// Establish db connection
 const db = new Sequelize({
-  dialect: "postgres",
-  host: "localhost",
-  username: "postgres",
-  password: "12345",
-  port: 5432,
-  database: "Proyect1",
+	dialect: 'postgres',
+	host: process.env.DB_HOST,
+	username: process.env.DB_USERNAME,
+	password: process.env.DB_PASSWORD,
+	port: process.env.DB_PORT,
+	database: process.env.DB,
+	logging: false,
 });
 
 module.exports = { db, DataTypes };

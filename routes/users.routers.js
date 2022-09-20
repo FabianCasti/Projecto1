@@ -7,11 +7,13 @@ const {
   ordersUserAll,
   orderUserFind,
 } = require("../controllers/users.controllers");
+
 const { protectSession } = require("../middlewares/auth.middlewares");
+const {createUserValidators}=require('../middlewares/validators.middleware')
 
 const Usersrouters = express.Router();
 
-Usersrouters.post("/signup", signupUser);
+Usersrouters.post("/signup",createUserValidators, signupUser);
 Usersrouters.post("/login", loginUser);
 Usersrouters.use(protectSession);
 Usersrouters.patch("/:id", updateUser);

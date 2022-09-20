@@ -1,18 +1,25 @@
 const { Users } = require("../models/users.models");
 const { Orders } = require("../models/orders.models");
+const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken");
+
 const signupUser = async (req, res) => {
   try {
-    await Users.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      status: "active",
-      role: "normal",
+    console.log(req.body.name);
+    console.log(req.body.email);
+    const {name,email,password}=req.body
+    const salt= await bcrypt.genSalt(12)
+    hashedPass= await bcrypt.hash(password,salt)
+    const newUser=await Users.create({
+      name,
+      email,
+      password:hashedPass,
     });
+    newUser.password=undefined
 
     res.status(201).json({
       status: "success",
+      data: newUser
     });
   } catch (error) {
     console.log(error);
@@ -30,9 +37,9 @@ const loginUser = async (req, res) => {
       });
     }
 
-    if (user.password !== req.body.password) {
+    if (!(await bcrypt.compare(req.body.password,user.password))) {
       return res.status(401).json({
-        status: "error",
+        status: "password do not match",
       });
     }
 
@@ -59,10 +66,12 @@ const updateUser = async (req, res) => {
         status: "not Found",
       });
     }
-    user.update({ name: req.body.name, email: req.body.email });
+    const userUpdated= await user.update({ name: req.body.name, email: req.body.email });
+    userUpdated.password=undefined
 
     res.status(200).json({
       status: "success",
+      data: userUpdated
     });
   } catch (error) {
     console.log(error);
@@ -77,10 +86,12 @@ const deleteUser = async (req, res) => {
         status: "not Found",
       });
     }
-    user.update({ status: "delete" });
+    const userDeleted=await user.update({ status: "delete" });
+    userDeleted.password=undefined
 
     res.status(200).json({
       status: "success",
+      data: userDeleted
     });
   } catch (error) {
     console.log(error);

@@ -10,18 +10,19 @@ const { Ordersrouters } = require("./routes/oders.routers");
 const app = express();
 app.use(express.json());
 
+
+//define routes
 app.use("/api/v1/users", Usersrouters);
 app.use("/api/v1/restaurants", Restaurantsrouters);
 app.use("/api/v1/meals", Mealsrouters);
 app.use("/api/v1/orders", Ordersrouters);
 
-db.authenticate()
-  .then(() => console.log("conexion exitosa"))
-  .catch(() => console.log("conexion bd incorrecta"));
+// Catch non-existing endpoints
+app.all('*', (req, res) => {
+	res.status(404).json({
+		status: 'error',
+		message: `${req.method} ${req.url} does not exists in our server`,
+	});
+});
 
-db.sync()
-  .then(() => console.log("sync exitosa"))
-  .catch(() => console.log("sync bd incorrecta"));
-
-// listen port
-app.listen(4000, console.log("express runing.."));
+module.exports = { app };
