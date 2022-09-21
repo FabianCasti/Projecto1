@@ -97,10 +97,11 @@ const deleteUser = async (req, res) => {
     console.log(error);
   }
 };
-const ordersUserAll = async (req, res) => {
+const ordersUserAll = async (req, res) => {//Incluir restaurante 
   try {
     const ordersUser = await Orders.findAll({
       where: { userId: req.sessionUser.id },
+      include:{model:Users}
     });
 
     res.status(200).json({
@@ -118,6 +119,7 @@ const orderUserFind = async (req, res) => {
     const { id } = req.params;
     const orderUser = await Orders.findOne({
       where: { id, userId: req.sessionUser.id },
+      include:{model:Users}
     });
     if (!orderUser) {
       return res.status(404).json({
