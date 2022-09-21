@@ -21,19 +21,21 @@ const {
   protectAdmin,
 } = require("../middlewares/auth.middlewares");
 const {createRestaurantValidators,createReviewValidators}=require('../middlewares/validators.middleware')
+const {restaurantExists}=require('../middlewares/restaurant.middlewares');
+const {reviewsExists,validateTokenAndUser}=require('../middlewares/reviews.middlewares');
 
 const Restaurantsrouters = express.Router();
 
 Restaurantsrouters.use(protectSession);
 Restaurantsrouters.post("/",createRestaurantValidators,restaurantCreate);
 Restaurantsrouters.get("/", restaurantsAll);
-Restaurantsrouters.get("/:id", restaurantFind);
-Restaurantsrouters.patch("/:id", protectAdmin, restaurantsUpdate);
-Restaurantsrouters.delete("/:id", protectAdmin, restaurantsDelete);
+Restaurantsrouters.get("/:id", restaurantExists,restaurantFind);
+Restaurantsrouters.patch("/:id", protectAdmin,restaurantExists,restaurantsUpdate);
+Restaurantsrouters.delete("/:id", protectAdmin,restaurantExists,restaurantsDelete);
 
 //Reviews routes
 Restaurantsrouters.post("/reviews/:restaurantId",createReviewValidators,createReview);
-Restaurantsrouters.patch("/reviews/:id",updateReview);
-Restaurantsrouters.delete("/reviews/:id",deleteReview);
+Restaurantsrouters.patch("/reviews/:id",reviewsExists,validateTokenAndUser,updateReview);
+Restaurantsrouters.delete("/reviews/:id",reviewsExists,validateTokenAndUser,deleteReview);
 
 module.exports = { Restaurantsrouters };

@@ -1,25 +1,24 @@
 const { Users } = require("../models/users.models");
 const { Orders } = require("../models/orders.models");
-const bcrypt = require('bcryptjs')
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const signupUser = async (req, res) => {
   try {
-   
-    const {name,email,password,role}=req.body
-    const salt= await bcrypt.genSalt(12)
-    hashedPass= await bcrypt.hash(password,salt)
-    const newUser=await Users.create({
+    const { name, email, password, role } = req.body;
+    const salt = await bcrypt.genSalt(12);
+    hashedPass = await bcrypt.hash(password, salt);
+    const newUser = await Users.create({
       name,
       email,
-      password:hashedPass,
-      role
+      password: hashedPass,
+      role,
     });
-    newUser.password=undefined
+    newUser.password = undefined;
 
     res.status(201).json({
       status: "success",
-      data: newUser
+      data: newUser,
     });
   } catch (error) {
     console.log(error);
@@ -37,7 +36,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    if (!(await bcrypt.compare(req.body.password,user.password))) {
+    if (!(await bcrypt.compare(req.body.password, user.password))) {
       return res.status(401).json({
         status: "password do not match",
       });
@@ -66,12 +65,15 @@ const updateUser = async (req, res) => {
         status: "not Found",
       });
     }
-    const userUpdated= await user.update({ name: req.body.name, email: req.body.email });
-    userUpdated.password=undefined
+    const userUpdated = await user.update({
+      name: req.body.name,
+      email: req.body.email,
+    });
+    userUpdated.password = undefined;
 
     res.status(200).json({
       status: "success",
-      data: userUpdated
+      data: userUpdated,
     });
   } catch (error) {
     console.log(error);
@@ -86,22 +88,23 @@ const deleteUser = async (req, res) => {
         status: "not Found",
       });
     }
-    const userDeleted=await user.update({ status: "delete" });
-    userDeleted.password=undefined
+    const userDeleted = await user.update({ status: "delete" });
+    userDeleted.password = undefined;
 
     res.status(200).json({
       status: "success",
-      data: userDeleted
+      data: userDeleted,
     });
   } catch (error) {
     console.log(error);
   }
 };
-const ordersUserAll = async (req, res) => {//Incluir restaurante 
+const ordersUserAll = async (req, res) => {
+  //Incluir restaurante
   try {
     const ordersUser = await Orders.findAll({
       where: { userId: req.sessionUser.id },
-      include:{model:Users}
+      include: { model: Users },
     });
 
     res.status(200).json({
@@ -119,7 +122,7 @@ const orderUserFind = async (req, res) => {
     const { id } = req.params;
     const orderUser = await Orders.findOne({
       where: { id, userId: req.sessionUser.id },
-      include:{model:Users}
+      include: { model: Users },
     });
     if (!orderUser) {
       return res.status(404).json({
@@ -144,5 +147,5 @@ module.exports = {
   updateUser,
   deleteUser,
   ordersUserAll,
-  orderUserFind
+  orderUserFind,
 };
