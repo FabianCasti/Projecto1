@@ -5,15 +5,15 @@ const jwt = require("jsonwebtoken");
 
 const signupUser = async (req, res) => {
   try {
-    console.log(req.body.name);
-    console.log(req.body.email);
-    const {name,email,password}=req.body
+   
+    const {name,email,password,role}=req.body
     const salt= await bcrypt.genSalt(12)
     hashedPass= await bcrypt.hash(password,salt)
     const newUser=await Users.create({
       name,
       email,
       password:hashedPass,
+      role
     });
     newUser.password=undefined
 

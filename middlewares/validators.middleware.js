@@ -31,22 +31,65 @@ const createUserValidators = [
     .withMessage("Password cannot be empty")
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters"),
+  body("role")
+    .isString()
+    .withMessage("Role can only be normal or admin")
+    .notEmpty()
+    .withMessage("Role can only be normal or admin"),
+  checkValidations,
+];
+const createRestaurantValidators = [
+  body("name")
+    .isString()
+    .withMessage("Name must be a string")
+    .notEmpty()
+    .withMessage("Name cannot be empty")
+    .isLength({ min: 3 })
+    .withMessage("Name must be at least 3 characters"),
+  body("address")
+    .isString()
+    .withMessage("address must be a string")
+    .notEmpty()
+    .withMessage("address cannot be empty"),
+  body("rating")
+    .notEmpty()
+    .withMessage("rating cannot be empty"),
+  checkValidations,
+];
+const createReviewValidators = [
+  body("userId").notEmpty().withMessage("userId cannot be empty"),
+  body("rating").notEmpty().withMessage("rating cannot be empty"),
+  body("comment")
+    .isString()
+    .withMessage("comment must be a string")
+    .notEmpty()
+    .withMessage("comment cannot be empty"),
+  checkValidations,
+];
+const createMealsValidators = [
+  body("name")
+    .isString()
+    .withMessage("Name must be a string")
+    .notEmpty()
+    .withMessage("Name cannot be empty")
+    .isLength({ min: 3 })
+    .withMessage("Name must be at least 3 characters"),
+  body("price").isEmpty().withMessage("Price cannot be empty"),
+  body("restaurantId").isEmpty().withMessage("restaurantId cannot be empty"),
+  checkValidations,
+];
+const createOrdersValidators = [
+  body("mealId").isEmpty().withMessage("mealId cannot be empty"),
+  body("userId").isEmpty().withMessage("userId cannot be empty"),
+  body("totalPrice").isEmpty().withMessage("totalPrice cannot be empty"),
+  body("quantity").isEmpty().withMessage("quantity cannot be empty"),
   checkValidations,
 ];
 
-const createTaskValidator = [
-  body("userId")
-    .isNumeric()
-    .withMessage("Name must be a number")
-    .notEmpty()
-    .withMessage("Name cannot be empty"),
-  body("title").isString().withMessage("Must provide a string"),
-  body("startDate")
-    .isDate()
-    .withMessage("Password must be a date")
-    .notEmpty()
-    .withMessage("Password cannot be empty"),
-  checkValidations,
-];
-
-module.exports = { createUserValidators, createTaskValidator };
+module.exports = {
+  createUserValidators,
+  createMealsValidators,
+  createOrdersValidators,
+  createRestaurantValidators,
+  createReviewValidators,
+};

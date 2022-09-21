@@ -1,6 +1,6 @@
 const { db, DataTypes } = require("../utils/database.utils");
 
-const Reviews = db.define("Reviews", {
+const Reviews = db.define("review", {
   id: {
     primaryKey: true,
     type: DataTypes.INTEGER,
@@ -9,7 +9,7 @@ const Reviews = db.define("Reviews", {
   },
  
   userId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   comment: {
@@ -17,12 +17,16 @@ const Reviews = db.define("Reviews", {
     allowNull: true,
   },
 
-  restaurantid: {
-    type: DataTypes.STRING,
+  restaurantId: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
 
   rating: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  status: {
     type: DataTypes.STRING,
     allowNull: true,
     defaultValue: "active",

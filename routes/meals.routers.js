@@ -6,15 +6,18 @@ const {
   mealsUpdate,
   mealsDelete,
 } = require("../controllers/meals.controllers");
+
+//Middlewares
 const {
   protectSession,
   protectAdmin,
 } = require("../middlewares/auth.middlewares");
+const {createMealsValidators}=require('../middlewares/validators.middleware');
 
 const Mealsrouters = express.Router();
 
 Mealsrouters.use(protectSession);
-Mealsrouters.post("/:id", mealsCreate);
+Mealsrouters.post("/:id", createMealsValidators,mealsCreate);
 Mealsrouters.get("/", mealsAll);
 Mealsrouters.get("/:id", mealsFind);
 Mealsrouters.patch("/:id",protectAdmin, mealsUpdate);

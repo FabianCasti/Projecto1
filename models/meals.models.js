@@ -2,7 +2,7 @@ const { db, DataTypes } = require("../utils/database.utils");
 const { Restaurants } = require("./restaurants.models");
 
 
-const Meals = db.define("Meals", {
+const Meals = db.define("meal", {
   id: {
     primaryKey: true,
     type: DataTypes.INTEGER,

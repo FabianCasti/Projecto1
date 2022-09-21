@@ -8,8 +8,9 @@ const {
   orderUserFind,
 } = require("../controllers/users.controllers");
 
+//Middlewares
 const { protectSession } = require("../middlewares/auth.middlewares");
-const {createUserValidators}=require('../middlewares/validators.middleware')
+const {createUserValidators}=require('../middlewares/validators.middleware');
 
 const Usersrouters = express.Router();
 
