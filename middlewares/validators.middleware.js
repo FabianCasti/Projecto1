@@ -74,15 +74,16 @@ const createMealsValidators = [
     .withMessage("Name cannot be empty")
     .isLength({ min: 3 })
     .withMessage("Name must be at least 3 characters"),
-  body("price").isEmpty().withMessage("Price cannot be empty"),
+    body("price").notEmpty().withMessage("Price cannot be empty"),
   body("restaurantId").isEmpty().withMessage("restaurantId cannot be empty"),
   checkValidations,
+ 
 ];
 const createOrdersValidators = [
-  body("mealId").isEmpty().withMessage("mealId cannot be empty"),
+  body("mealId").notEmpty().withMessage("mealId cannot be empty"),
   body("userId").isEmpty().withMessage("userId cannot be empty"),
   body("totalPrice").isEmpty().withMessage("totalPrice cannot be empty"),
-  body("quantity").isEmpty().withMessage("quantity cannot be empty"),
+  body("quantity").notEmpty().withMessage("quantity cannot be empty"),
   checkValidations,
 ];
 

@@ -25,8 +25,9 @@ const userExists = async (req, res, next) => {
 const validateTokenAndId = (req, res, next) => {
   const { id } = req.params;
 
+// ! agrege el return
   if (!(parseInt(id) === req.sessionUser.id)) {
-    res.status(402).json({
+    return res.status(402).json({
       status: "id from token does not match with id from end point",
     });
   }
