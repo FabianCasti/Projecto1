@@ -35,9 +35,9 @@ Restaurantsrouters.delete("/:id", protectAdmin,restaurantExists,restaurantsDelet
 
 //Reviews routes // ! aqui le falta obtener el userid desde la sesion
 Restaurantsrouters.post("/reviews/:restaurantId",createReviewValidators,createReview);
-//! sale el error pero actualiza falta un return
+
 Restaurantsrouters.patch("/reviews/:id",reviewsExists,validateTokenAndUser,updateReview);
-//! aqui tambien elimina falta un return
+
 Restaurantsrouters.delete("/reviews/:id",reviewsExists,validateTokenAndUser,deleteReview);
 
 module.exports = { Restaurantsrouters };

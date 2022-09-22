@@ -1,10 +1,11 @@
 const { Users } = require("../models/users.models");
 const jwt = require("jsonwebtoken");
-const catchAsync = (fn) => {
-  return (req, res, next) => {
-    fn(req, res, next).catch((err) => next(err));
-  };
-};
+const { catchAsync } = require("../utils/catchAsync.utils");
+// const catchAsync = (fn) => {
+//   return (req, res, next) => {
+//     fn(req, res, next).catch((err) => next(err));
+//   };
+// };
 
 const protectSession = catchAsync(async (req, res, next) => {
   // Get token
@@ -51,10 +52,11 @@ const protectAdmin = (req, res, next) => {
   const { sessionUser } = req;
 
   if (sessionUser.role !== "admin") {
-    return res.status(403).json({
-      status: "error",
-      message: "You do not have the access level for this data.",
-    });
+    return next(new AppError('You do not have the access level for this data.', 403));
+    // res.status(403).json({
+    //   status: "error",
+    //   message: "You do not have the access level for this data.",
+    // });
   }
 
   next();

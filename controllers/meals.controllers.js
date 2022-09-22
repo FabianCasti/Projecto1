@@ -1,8 +1,10 @@
 const { Meals } = require("../models/meals.models");
 const { Restaurants } = require("../models/restaurants.models");
+const { AppError } = require("../utils/appError.utils");
+const { catchAsync } = require("../utils/catchAsync.utils");
 
-const mealsCreate = async (req, res) => {
-  try {
+const mealsCreate = catchAsync(async (req, res) => {
+
     const { id } = req.params;
     await Meals.create({
       restaurantId: id,
@@ -14,13 +16,11 @@ const mealsCreate = async (req, res) => {
     res.status(201).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const mealsAll = async (req, res) => {
-  try {
+});
+
+const mealsAll = catchAsync(async (req, res) => {
+  
     const meals = await Meals.findAll({
       where: { status: "active" },
       include: { model: Restaurants },
@@ -32,13 +32,11 @@ const mealsAll = async (req, res) => {
         meals,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const mealsFind = async (req, res) => {
-  try {
+});
+
+const mealsFind = catchAsync(async (req, res, next) => {
+  
     const { id } = req.params;
 
     const meal = await Meals.findOne({
@@ -46,9 +44,9 @@ const mealsFind = async (req, res) => {
       include: { model: Restaurants },
     });
     if (!meal) {
-      return res.status(404).json({
-        status: "not Found",
-      });
+      return next(new AppError('not Found', 404));
+   
+      
     }
     res.status(200).json({
       status: "success",
@@ -56,20 +54,17 @@ const mealsFind = async (req, res) => {
         meal,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const mealsUpdate = async (req, res) => {
-  try {
+});
+
+const mealsUpdate = catchAsync(async (req, res, next) => {
+  
     const { id } = req.params;
     const meal = await Meals.findOne({ where: { id } });
 
     if (!meal) {
-      return res.status(404).json({
-        status: "Not found",
-      });
+      return   next(new AppError('not Found', 404));
+   
     }
 
     meal.update({ name: req.body.name, price: req.body.price });
@@ -77,13 +72,11 @@ const mealsUpdate = async (req, res) => {
     res.status(200).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const mealsDelete = async (req, res) => {
-  try {
+});
+
+const mealsDelete = catchAsync(async (req, res) => {
+ 
     const { id } = req.params;
     const meal = await Meals.findOne({ where: { id } });
     meal.update({ status: "delete" });
@@ -91,10 +84,8 @@ const mealsDelete = async (req, res) => {
     res.status(200).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
+ 
+});
 
 module.exports = {
   mealsCreate,

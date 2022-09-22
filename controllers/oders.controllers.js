@@ -1,16 +1,18 @@
 const { Orders } = require("../models/orders.models");
 const { Meals } = require("../models/meals.models");
 const { Restaurants } = require("../models/restaurants.models");
+const { catchAsync } = require("../utils/catchAsync.utils");
+const { AppError } = require("../utils/appError.utils");
 
-const ordersCreate = async (req, res) => {
-  try {
+const ordersCreate = catchAsync(async (req, res, next) => {
+
     const meal = await Meals.findOne({
       where: { id: req.body.mealId, status: "active" },
     });
     if (!meal) {
-      return res.status(404).json({
-        status: "not Found meal",
-      });
+      return  next(new AppError('not Found meal', 404));
+      
+     
     }
     const totalPrice = meal.price * req.body.quantity;
     const userId = req.sessionUser.id;
@@ -26,12 +28,11 @@ const ordersCreate = async (req, res) => {
     res.status(201).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const ordersUserAll = async (req, res) => {
-  try {
+
+});
+
+const ordersUserAll = catchAsync(async (req, res) => {
+  
     const ordersUser = await Orders.findAll({
       where: { userId: req.sessionUser.id },
       include: { model: Meals, include: { model: Restaurants } },
@@ -43,19 +44,19 @@ const ordersUserAll = async (req, res) => {
         ordersUser,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const ordersUpdate = async (req, res) => {
-  try {
+
+});
+
+const ordersUpdate = catchAsync(async (req, res, next) => {
+  
     const { id } = req.params;
     const order = await Orders.findOne({ where: { id, status: "active" } });
 
     if (!order) {
-      return res.status(404).json({
-        status: "Not found",
-      });
+      return next(new AppError('not Found order', 404));
+      // res.status(404).json({
+      //   status: "Not found",
+      // });
     }
 
     order.update({ status: "completed" });
@@ -63,19 +64,16 @@ const ordersUpdate = async (req, res) => {
     res.status(200).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const ordersDelete = async (req, res) => {
-  try {
+
+});
+
+const ordersDelete = catchAsync(async (req, res, next) => {
+  
     const { id } = req.params;
     const order = await Orders.findOne({ where: { id, status: "active" } });
 
     if (!order) {
-      return res.status(404).json({
-        status: "Not found",
-      });
+      return next(new AppError('order not found', 404));
     }
 
     order.update({ status: "cancelled" });
@@ -83,10 +81,8 @@ const ordersDelete = async (req, res) => {
     res.status(200).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
+ 
+});
 
 module.exports = {
   ordersCreate,

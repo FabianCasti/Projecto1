@@ -1,7 +1,9 @@
 const { Restaurants } = require("../models/restaurants.models");
+const { AppError } = require("../utils/appError.utils");
+const { catchAsync } = require("../utils/catchAsync.utils");
 
-const restaurantCreate = async (req, res) => {
-  try {
+const restaurantCreate = catchAsync(async (req, res) => {
+ 
     await Restaurants.create({
       name: req.body.name,
       address: req.body.address,
@@ -12,13 +14,11 @@ const restaurantCreate = async (req, res) => {
     res.status(201).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const restaurantsAll = async (req, res) => {
-  try {
+});
+
+const restaurantsAll = catchAsync(async (req, res) => {
+ 
     const restaurants = await Restaurants.findAll({
       where: { status: "active" },
     });
@@ -29,18 +29,16 @@ const restaurantsAll = async (req, res) => {
         restaurants,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const restaurantFind = async (req, res) => {
-  try {
+
+});
+
+
+const restaurantFind = catchAsync(async (req, res, next) => {
+  
     const { id } = req.params;
     const restaurant = await Restaurants.findOne({ where: { id } });
     if (!restaurant) {
-      return res.status(404).json({
-        status: "not Found",
-      });
+      return next(new AppError('restaurant not found', 404));
     }
     res.status(200).json({
       status: "success",
@@ -48,20 +46,16 @@ const restaurantFind = async (req, res) => {
         restaurant,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const restaurantsUpdate = async (req, res) => {
-  try {
+});
+
+const restaurantsUpdate = catchAsync(async (req, res, next) => {
+ 
     const { id } = req.params;
     const restaurant = await Restaurants.findOne({ where: { id } });
 
     if (!restaurant) {
-      return res.status(404).json({
-        status: "Not found",
-      });
+      return next(new AppError('restaurant not found', 404));
     }
 
     restaurant.update({ name: req.body.name, address: req.body.address });
@@ -69,13 +63,11 @@ const restaurantsUpdate = async (req, res) => {
     res.status(200).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-const restaurantsDelete = async (req, res) => {
-  try {
+});
+
+const restaurantsDelete = catchAsync(async (req, res) => {
+  
     const { id } = req.params;
     const restaurant = await Restaurants.findOne({ where: { id } });
     restaurant.update({ status: "delete" });
@@ -83,10 +75,8 @@ const restaurantsDelete = async (req, res) => {
     res.status(200).json({
       status: "success",
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
+
+});
 
 module.exports = {
   restaurantCreate,

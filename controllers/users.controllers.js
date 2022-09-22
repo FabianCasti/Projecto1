@@ -1,10 +1,12 @@
 const { Users } = require("../models/users.models");
 const { Orders } = require("../models/orders.models");
+const { catchAsync } = require("../utils/catchAsync.utils");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { AppError } = require("../utils/appError.utils");
 
-const signupUser = async (req, res) => {
-  try {
+const signupUser = catchAsync(async (req, res) => {
+ 
     const { name, email, password, role } = req.body;
     const salt = await bcrypt.genSalt(12);
     hashedPass = await bcrypt.hash(password, salt);
@@ -20,26 +22,22 @@ const signupUser = async (req, res) => {
       status: "success",
       data: newUser,
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const loginUser = async (req, res) => {
-  try {
+
+});
+
+const loginUser = catchAsync(async (req, res, next) => {
+  
     const user = await Users.findOne({
       where: { status: "active", email: req.body.email },
     });
 
+
     if (!user) {
-      return res.status(401).json({
-        status: "error",
-      });
+      return next(new AppError('error login', 401));
     }
 
     if (!(await bcrypt.compare(req.body.password, user.password))) {
-      return res.status(401).json({
-        status: "password do not match",
-      });
+      return next(new AppError('error login', 401));
     }
 
     const token = jwt.sign({ id: user.id }, "fabiancp", {
@@ -52,18 +50,15 @@ const loginUser = async (req, res) => {
         token,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const updateUser = async (req, res) => {
-  try {
+
+});
+
+const updateUser = catchAsync(async (req, res, next) => {
+ 
     const { id } = req.params;
     const user = await Users.findOne({ where: { id } });
     if (!user) {
-      return res.status(404).json({
-        status: "not Found",
-      });
+      return next(new AppError('user not found', 404));
     }
     const userUpdated = await user.update({
       name: req.body.name,
@@ -75,18 +70,15 @@ const updateUser = async (req, res) => {
       status: "success",
       data: userUpdated,
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const deleteUser = async (req, res) => {
-  try {
+
+});
+
+const deleteUser = catchAsync(async (req, res, next) => {
+
     const { id } = req.params;
     const user = await Users.findOne({ where: { id } });
     if (!user) {
-      return res.status(404).json({
-        status: "not Found",
-      });
+      return next(new AppError('user not found', 404));
     }
     const userDeleted = await user.update({ status: "delete" });
     userDeleted.password = undefined;
@@ -95,13 +87,12 @@ const deleteUser = async (req, res) => {
       status: "success",
       data: userDeleted,
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const ordersUserAll = async (req, res) => {
+
+});
+
+const ordersUserAll = catchAsync(async (req, res) => {
   //Incluir restaurante
-  try {
+ 
     const ordersUser = await Orders.findAll({
       where: { userId: req.sessionUser.id },
       include: { model: Users },
@@ -113,21 +104,19 @@ const ordersUserAll = async (req, res) => {
         ordersUser,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
-const orderUserFind = async (req, res) => {
-  try {
+
+});
+
+
+const orderUserFind = catchAsync(async (req, res, next) => {
+  
     const { id } = req.params;
     const orderUser = await Orders.findOne({
       where: { id, userId: req.sessionUser.id },
       include: { model: Users },
     });
     if (!orderUser) {
-      return res.status(404).json({
-        status: "not Found",
-      });
+      return next(new AppError('order not found', 404));
     }
 
     res.status(200).json({
@@ -136,10 +125,8 @@ const orderUserFind = async (req, res) => {
         orderUser,
       },
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
+
+});
 
 module.exports = {
   loginUser,
