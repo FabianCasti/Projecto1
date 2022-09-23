@@ -1,4 +1,5 @@
 const { body, validationResult } = require("express-validator");
+const { AppError } = require("../utils/appError.utils");
 
 const checkValidations = (req, res, next) => {
   const errors = validationResult(req);
@@ -7,10 +8,10 @@ const checkValidations = (req, res, next) => {
     const errMessage = errors.array().map((err) => err.msg);
     const message = errMessage.join(". ");
 
-    return res.status(400).json({
-      status: "Error",
-      message,
-    });
+
+    return next(new AppError(message, 400));
+    
+
   }
   next();
 };

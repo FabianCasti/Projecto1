@@ -4,6 +4,8 @@ const { catchAsync } = require("../utils/catchAsync.utils");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { AppError } = require("../utils/appError.utils");
+const { Restaurants } = require("../models/restaurants.models");
+const { Meals } = require("../models/meals.models");
 
 const signupUser = catchAsync(async (req, res) => {
  
@@ -94,8 +96,8 @@ const ordersUserAll = catchAsync(async (req, res) => {
   //Incluir restaurante
  
     const ordersUser = await Orders.findAll({
-      where: { userId: req.sessionUser.id },
-      include: { model: Users },
+      where: { userId: req.sessionUser.id, status: 'active' },
+      include: [{ model: Users },{model:Meals, attributes: ['id', 'name'], include:{model: Restaurants}}],
     });
 
     res.status(200).json({
